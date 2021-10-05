@@ -1,0 +1,28 @@
+{{ range $.Values.services }}
+{{ if .endpoint }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata: 
+  name: {{ $.Values.name }}-{{ .name }}
+spec: 
+  rules: 
+  - host: {{ .endpoint.host }}
+    http: 
+      paths: 
+      - backend: 
+          serviceName: {{ $.Values.name }}-{{ .name }}-dapr
+          servicePort: 80
+        path: /v1.0
+        pathType: ImplementationSpecific
+      - backend: 
+          serviceName: {{ $.Values.name }}-{{ .name }}
+          servicePort: 80
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts: 
+    - {{ .endpoint.host }}
+    secretName: {{ .endpoint.tlsSecret | default "dk-region-ru" }}
+---
+{{ end }}
+{{ end }}

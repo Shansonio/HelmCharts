@@ -1,0 +1,145 @@
+{{ range $.Values.services }}
+{{- $serviceName := .name -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: {{ $.Values.name }}-{{ $serviceName }}
+  labels: 
+    app: {{ $.Values.name }}-{{ $serviceName }}
+spec: 
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector: 
+    matchLabels: 
+      app: {{ $.Values.name }}-{{ $serviceName }}
+  template: 
+    metadata: 
+      labels: 
+        app: {{ $.Values.name }}-{{ $serviceName }}
+      annotations: 
+        dapr.io/enabled: 'true'
+        dapr.io/app-id: '{{ $.Values.name }}-{{ $serviceName }}'
+        dapr.io/app-port: '80'
+        dapr.io/http-max-request-size: '128'
+        dapr.io/log-level: 'info'
+        {{ if .dapr  }} 
+        dapr.io/config: '{{ $.Values.name }}-{{ $serviceName }}-dapr-config'
+        {{ end }}
+    spec:   
+      {{ if .init  }}  
+      initContainers: 
+      - name: {{ $.Values.name }}-{{ $serviceName }}-init
+        image: {{ $.Values.registry }}/{{ $.Values.name }}/{{ $serviceName }}
+        {{ if .init.args }}
+        args: 
+        {{ range .init.args }}
+          - {{ quote . }}
+        {{ end }}
+        {{ end }}
+        ports: 
+        - containerPort: 80
+        volumeMounts: 
+        - name: cacertificates
+          mountPath: /etc/ssl/certs
+          readOnly: true
+        imagePullPolicy: IfNotPresent
+        env:
+        {{ if .configs }}
+        {{ range .configs }}
+        {{ if .env }}
+        - name: {{ .env }}
+          valueFrom: 
+            configMapKeyRef: 
+              name: {{ $.Values.name }}-{{ $serviceName }}-config-{{ template "rand" . }}
+              key: {{ .name }}
+        {{ end }}
+        {{ end }}
+        {{ end }}
+        {{ if .secrets }}
+        {{ range .secrets }}
+        {{ if .env }}
+        - name: {{ .env }}
+          valueFrom: 
+            secretKeyRef: 
+              name: {{ $.Values.name }}-{{ $serviceName }}-secret-{{ template "rand" . }}
+              key: {{ .name }}
+        {{ end }}
+        {{ end }}
+        {{ end }}
+        {{ if .global }}
+        {{ if .global.identityServerUrl }}
+        - name: {{ .global.identityServerUrl }} 
+          valueFrom: 
+            configMapKeyRef: 
+              name: environment
+              key: identity-server-url
+        {{ end }}
+        {{ if .global.environment }}
+        - name: {{ .global.environment }}
+          valueFrom: 
+            configMapKeyRef: 
+              name: environment
+              key: name
+        {{ end }}
+        {{ end }}
+      {{ end }}
+      containers: 
+      - name: {{ $.Values.name }}-{{ $serviceName }}
+        image: {{ $.Values.registry }}/{{ $.Values.name }}/{{ $serviceName }}
+        ports: 
+        - containerPort: 80
+        volumeMounts: 
+        - name: cacertificates
+          mountPath: /etc/ssl/certs
+          readOnly: true
+        imagePullPolicy: IfNotPresent
+        env:
+        {{ if .configs }}
+        {{ range .configs }}
+        {{ if .env }}
+        - name: {{ .env }}
+          valueFrom: 
+            configMapKeyRef: 
+              name: {{ $.Values.name }}-{{ $serviceName }}-config-{{ template "rand" . }}
+              key: {{ .name }}
+        {{ end }}
+        {{ end }}
+        {{ end }}
+        {{ if .secrets }}
+        {{ range .secrets }}
+        {{ if .env }}
+        - name: {{ .env }}
+          valueFrom: 
+            secretKeyRef: 
+              name: {{ $.Values.name }}-{{ $serviceName }}-secret-{{ template "rand" . }}
+              key: {{ .name }}
+        {{ end }}
+        {{ end }}
+        {{ end }}
+        {{ if .global }}
+        {{ if .global.identityServerUrl }}
+        - name: {{ .global.identityServerUrl }} 
+          valueFrom: 
+            configMapKeyRef: 
+              name: environment
+              key: identity-server-url
+        {{ end }}
+        {{ if .global.environment }}
+        - name: {{ .global.environment }}
+          valueFrom: 
+            configMapKeyRef: 
+              name: environment
+              key: name
+        {{ end }}
+        {{ end }}
+      volumes: 
+      - name: cacertificates
+        secret: 
+          secretName: ca-certificates  
+      imagePullSecrets:
+      - name: {{ $.Values.imagePullSecret }}
+---
+{{ end }}
+  
+  

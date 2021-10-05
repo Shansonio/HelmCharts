@@ -1,0 +1,13 @@
+{{ range $.Values.services }}
+{{ if .configs }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $.Values.name }}-{{ .name }}-config-{{ template "rand" . }}
+data:
+{{- range .configs }}
+  {{ .name }}: {{ quote .value }}
+{{- end }}
+---
+{{ end }}
+{{ end }}

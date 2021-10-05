@@ -1,0 +1,5 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: Chart for typical DC Region microservice installation
+name: Microservice
+version: 1.0.0
