@@ -1,5 +1,5 @@
 registry: dk-dev.region.ru
-name: appName
+name: appName1
 imagePullSecret: dk
 services:
 - name: front
