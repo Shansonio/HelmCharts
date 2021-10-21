@@ -1,19 +1,22 @@
-{{ range $.Values.services }}
-{{ if .endpoint }}
+{{- range $serviceName, $service := .Values.services }}
+{{ if $service.endpoint }}
+
 kind: Service
 apiVersion: v1
 metadata: 
-  name: {{ $.Values.name }}-{{ .name }}
+  name: {{ $.Values.name }}-{{ $serviceName }}
   labels: 
-    app: {{ $.Values.name }}-{{ .name }}
+    app: {{ $.Values.name }}-{{ $serviceName }}
 spec: 
   selector: 
-    app:  {{ $.Values.name }}-{{ .name }}
+    app:  {{ $.Values.name }}-{{ $serviceName }}
   ports: 
   - protocol: TCP
     port: 80
     targetPort: 80
   type: ClusterIP
+
 ---
+
 {{ end }}
 {{ end }}

@@ -1,28 +1,30 @@
-{{ range $.Values.services }}
-{{ if .endpoint }}
+{{- range $serviceName, $service := .Values.services }}
+{{ if $service.endpoint }}
+
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata: 
-  name: {{ $.Values.name }}-{{ .name }}
+  name: {{ $.Values.name }}-{{ $serviceName }}
 spec: 
   rules: 
-  - host: {{ .endpoint.host }}
+  - host: {{ $service.endpoint.host }}
     http: 
       paths: 
       - backend: 
-          serviceName: {{ $.Values.name }}-{{ .name }}-dapr
+          serviceName: {{ $.Values.name }}-{{ $serviceName }}-dapr
           servicePort: 80
         path: /v1.0
         pathType: ImplementationSpecific
       - backend: 
-          serviceName: {{ $.Values.name }}-{{ .name }}
+          serviceName: {{ $.Values.name }}-{{ $serviceName }}
           servicePort: 80
         path: /
         pathType: ImplementationSpecific
   tls:
   - hosts: 
-    - {{ .endpoint.host }}
-    secretName: {{ .endpoint.tlsSecret | default "dk-region-ru" }}
+    - {{ $service.endpoint.host }}
+    secretName: {{ $service.endpoint.tlsSecret | default "dk-region-ru" }}
 ---
+
 {{ end }}
 {{ end }}

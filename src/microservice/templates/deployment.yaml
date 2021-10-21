@@ -1,5 +1,5 @@
-{{ range $.Values.services }}
-{{- $serviceName := .name -}}
+{{- range $serviceName, $service := .Values.services }}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
@@ -23,17 +23,17 @@ spec:
         dapr.io/app-port: '80'
         dapr.io/http-max-request-size: '128'
         dapr.io/log-level: 'info'
-        {{ if .dapr  }} 
-        dapr.io/config: '{{ $.Values.name }}-{{ $serviceName }}-dapr-config'
+        {{ if $service.dapr  }} 
+        dapr.io/config: '{{ $.Values.name }}-{{ $serviceName }}-dapr-config-{{ template "rand" . }}'
         {{ end }}
     spec:   
-      {{ if .init  }}  
+      {{ if $service.init  }}  
       initContainers: 
       - name: {{ $.Values.name }}-{{ $serviceName }}-init
         image: {{ $.Values.registry }}/{{ $.Values.name }}/{{ $serviceName }}
-        {{ if .init.args }}
+        {{ if $service.init.args }}
         args: 
-        {{ range .init.args }}
+        {{ range $service.init.args }}
           - {{ quote . }}
         {{ end }}
         {{ end }}
@@ -45,8 +45,8 @@ spec:
           readOnly: true
         imagePullPolicy: IfNotPresent
         env:
-        {{ if .configs }}
-        {{ range .configs }}
+        {{ if $service.configs }}
+        {{ range $service.configs }}
         {{ if .env }}
         - name: {{ .env }}
           valueFrom: 
@@ -56,8 +56,8 @@ spec:
         {{ end }}
         {{ end }}
         {{ end }}
-        {{ if .secrets }}
-        {{ range .secrets }}
+        {{ if $service.secrets }}
+        {{ range $service.secrets }}
         {{ if .env }}
         - name: {{ .env }}
           valueFrom: 
@@ -67,16 +67,16 @@ spec:
         {{ end }}
         {{ end }}
         {{ end }}
-        {{ if .global }}
-        {{ if .global.identityServerUrl }}
-        - name: {{ .global.identityServerUrl }} 
+        {{ if $service.mapEnvVars }}
+        {{ if $service.mapEnvVars.identityServerUrl }}
+        - name: {{ $service.mapEnvVars.identityServerUrl }} 
           valueFrom: 
             configMapKeyRef: 
               name: environment
               key: identity-server-url
         {{ end }}
-        {{ if .global.environment }}
-        - name: {{ .global.environment }}
+        {{ if $service.mapEnvVars.environment }}
+        - name: {{ $service.mapEnvVars.environment }}
           valueFrom: 
             configMapKeyRef: 
               name: environment
@@ -95,8 +95,8 @@ spec:
           readOnly: true
         imagePullPolicy: IfNotPresent
         env:
-        {{ if .configs }}
-        {{ range .configs }}
+        {{ if $service.configs }}
+        {{ range $service.configs }}
         {{ if .env }}
         - name: {{ .env }}
           valueFrom: 
@@ -106,8 +106,8 @@ spec:
         {{ end }}
         {{ end }}
         {{ end }}
-        {{ if .secrets }}
-        {{ range .secrets }}
+        {{ if $service.secrets }}
+        {{ range $service.secrets }}
         {{ if .env }}
         - name: {{ .env }}
           valueFrom: 
@@ -117,16 +117,16 @@ spec:
         {{ end }}
         {{ end }}
         {{ end }}
-        {{ if .global }}
-        {{ if .global.identityServerUrl }}
-        - name: {{ .global.identityServerUrl }} 
+        {{ if $service.mapEnvVars }}
+        {{ if $service.mapEnvVars.identityServerUrl }}
+        - name: {{ $service.mapEnvVars.identityServerUrl }} 
           valueFrom: 
             configMapKeyRef: 
               name: environment
               key: identity-server-url
         {{ end }}
-        {{ if .global.environment }}
-        - name: {{ .global.environment }}
+        {{ if $service.mapEnvVars.environment }}
+        - name: {{ $service.mapEnvVars.environment }}
           valueFrom: 
             configMapKeyRef: 
               name: environment
@@ -137,8 +137,10 @@ spec:
       - name: cacertificates
         secret: 
           secretName: ca-certificates  
+      {{ if $.Values.imagePullSecret }}
       imagePullSecrets:
       - name: {{ $.Values.imagePullSecret }}
+      {{ end }}
 ---
 {{ end }}
   

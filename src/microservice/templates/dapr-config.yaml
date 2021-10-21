@@ -1,23 +1,26 @@
-{{ range $.Values.services }}
-{{ if .dapr }}
-{{- $serviceName := .name -}}
+{{- range $serviceName, $service := .Values.services }}
+{{ if $service.dapr }}
+
 apiVersion: dapr.io/v1alpha1
 kind: Configuration
 metadata:
-  name: {{ $.Values.name }}-{{ $serviceName }}-dapr-config
+  name: {{ $.Values.name }}-{{ $serviceName }}-dapr-config-{{ template "rand" . }}
 spec:
-{{ if .dapr.auth }}
+  metric:
+    enabled: true
+{{ if $service.dapr.auth }}
   httpPipeline:
     handlers:
-    - name: {{ $.Values.name }}-{{ $serviceName }}-oauth2
+    - name: {{ $.Values.name }}-{{ $serviceName }}-oauth2-{{ template "rand" . }}
       type: middleware.http.oauth2clientcredentials
 {{ end }}
-{{ if .dapr.tracing }}
+{{ if $service.dapr.tracing }}
   tracing:
-    samplingRate: {{ quote .dapr.tracing.samplingRate | default "1" }}
+    samplingRate: {{ quote $service.dapr.tracing.samplingRate | default "1" }}
     zipkin:
-      endpointAddress: {{ quote .dapr.tracing.endpointAddress | default "http://zipkin.tracing.svc.cluster.local:9411/api/v2/spans" }} 
+      endpointAddress: {{ quote $service.dapr.tracing.endpointAddress | default "http://zipkin.tracing.svc.cluster.local:9411/api/v2/spans" }} 
 {{ end }}
+
 ---
 {{ end }}
 {{ end }}
