@@ -1,15 +1,15 @@
-{{- range $serviceName, $service := .Values.services }}
+{{- range $serviceName, $service := .Values }}
 {{ if $service.endpoint }}
 
 kind: Service
 apiVersion: v1
 metadata: 
-  name: {{ $.Values.name }}-{{ $serviceName }}
+  name: {{ $.Release.Name  }}-{{ $serviceName }}
   labels: 
-    app: {{ $.Values.name }}-{{ $serviceName }}
+    app: {{ $.Release.Name  }}-{{ $serviceName }}
 spec: 
   selector: 
-    app:  {{ $.Values.name }}-{{ $serviceName }}
+    app:  {{ $.Release.Name  }}-{{ $serviceName }}
   ports: 
   - protocol: TCP
     port: 80

@@ -1,17 +1,17 @@
-{{- range $serviceName, $service := .Values.services }}
+{{- range $serviceName, $service := .Values }}
 {{ if $service.dapr }}
 
 apiVersion: dapr.io/v1alpha1
 kind: Configuration
 metadata:
-  name: {{ $.Values.name }}-{{ $serviceName }}-dapr-config-{{ template "rand" . }}
+  name: {{ $.Release.Name  }}-{{ $serviceName }}-dapr-config-{{ template "rand" . }}
 spec:
   metric:
     enabled: true
 {{ if $service.dapr.auth }}
   httpPipeline:
     handlers:
-    - name: {{ $.Values.name }}-{{ $serviceName }}-oauth2-{{ template "rand" . }}
+    - name: {{ $.Release.Name  }}-{{ $serviceName }}-oauth2-{{ template "rand" . }}
       type: middleware.http.oauth2clientcredentials
 {{ end }}
 {{ if $service.dapr.tracing }}

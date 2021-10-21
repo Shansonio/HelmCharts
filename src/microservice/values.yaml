@@ -1,4 +1,1 @@
-registry: dk-dev.region.ru
-name: app
-imagePullSecret: dk
-services: {}
+

@@ -1,10 +1,10 @@
-{{- range $serviceName, $service := .Values.services }}
+{{- range $serviceName, $service := .Values }}
 {{ if $service.configs }}
 
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ $.Values.name }}-{{ $serviceName }}-config-{{ template "rand" . }}
+  name: {{ $.Release.Name  }}-{{ $serviceName }}-config-{{ template "rand" . }}
 data:
 {{- range $service.configs }}
   {{ .name }}: {{ quote .value }}

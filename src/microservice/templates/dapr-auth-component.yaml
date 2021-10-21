@@ -1,11 +1,11 @@
-{{- range $serviceName, $service := .Values.services }}
+{{- range $serviceName, $service := .Values }}
 {{ if $service.dapr }}
 {{ if $service.dapr.auth }}
 
 apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
-  name: {{ $.Values.name }}-{{ $serviceName }}-oauth2-{{ template "rand" . }}
+  name: {{ $.Release.Name  }}-{{ $serviceName }}-oauth2-{{ template "rand" . }}
 spec:
   type: middleware.http.oauth2clientcredentials
   version: v1
@@ -14,7 +14,7 @@ spec:
     value: {{ $service.dapr.auth.clientId }}
   - name: clientSecret
     secretKeyRef:
-      name: {{ $.Values.name }}-{{ $serviceName }}-secret-{{ template "rand" . }}
+      name: {{ $.Release.Name  }}-{{ $serviceName }}-secret-{{ template "rand" . }}
       key: {{ $service.dapr.auth.clientSecretKey }}
   - name: scopes
     value: {{ $service.dapr.auth.scopes }}

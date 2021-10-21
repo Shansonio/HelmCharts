@@ -1,10 +1,10 @@
-{{- range $serviceName, $service := .Values.services }}
+{{- range $serviceName, $service := .Values }}
 {{ if $service.endpoint }}
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata: 
-  name: {{ $.Values.name }}-{{ $serviceName }}
+  name: {{ $.Release.Name  }}-{{ $serviceName }}
 spec: 
   rules: 
   - host: {{ $service.endpoint.host }}
@@ -12,14 +12,14 @@ spec:
       paths: 
       - backend: 
           service:
-            name: {{ $.Values.name }}-{{ $serviceName }}-dapr
+            name: {{ $.Release.Name  }}-{{ $serviceName }}-dapr
             port:
               number: 80
         path: /v1.0
         pathType: ImplementationSpecific
       - backend: 
           service:
-            name: {{ $.Values.name }}-{{ $serviceName }}
+            name: {{ $.Release.Name  }}-{{ $serviceName }}
             port: 
               number: 80
         path: /
