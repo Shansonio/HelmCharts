@@ -11,13 +11,17 @@ spec:
     http: 
       paths: 
       - backend: 
-          serviceName: {{ $.Values.name }}-{{ $serviceName }}-dapr
-          servicePort: 80
+          service:
+            name: {{ $.Values.name }}-{{ $serviceName }}-dapr
+            port:
+              number: 80
         path: /v1.0
         pathType: ImplementationSpecific
       - backend: 
-          serviceName: {{ $.Values.name }}-{{ $serviceName }}
-          servicePort: 80
+          service:
+            name: {{ $.Values.name }}-{{ $serviceName }}
+            port: 
+              number: 80
         path: /
         pathType: ImplementationSpecific
   tls:
