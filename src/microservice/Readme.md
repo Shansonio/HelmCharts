@@ -6,6 +6,8 @@ global: # optional
 #set of services
 
 front: #service name
+  registry: dk-dev.region.ru # optional: image registry
+  imagePullSecret: dk # optional: registry password
   mapEnvVars: #optional: map environment variavles to env variables service container
     identityServerUrl: IDENTITY_SERVER_URL 
     environment: ENVIRONMENT # Development/Staging/Production
@@ -19,7 +21,8 @@ front: #service name
   secrets: # services settings will be placed in Secret
   - name: secret # secret name in Secret
     value: encrypted_value # secret value
-    env: environment_variable_name # service container environmnt variable in which setting will be mapped
+  registry: dk-dev.region.ru # optional: image registry
+  imagePullSecret: dk # optional: registry password
 
 api
   mapEnvVars:
