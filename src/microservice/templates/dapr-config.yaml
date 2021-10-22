@@ -1,4 +1,6 @@
 {{- range $serviceName, $service := .Values }}
+
+{{ if not eq $serviceName "global" }}
 {{ if $service.dapr }}
 
 apiVersion: dapr.io/v1alpha1
@@ -22,5 +24,6 @@ spec:
 {{ end }}
 
 ---
+{{ end }}
 {{ end }}
 {{ end }}

@@ -1,4 +1,5 @@
 {{- range $serviceName, $service := .Values }}
+{{ if not eq $serviceName "global" }}
 {{ if $service.configs }}
 
 apiVersion: v1
@@ -11,5 +12,6 @@ data:
 {{- end }}
 
 ---
+{{ end }}
 {{ end }}
 {{ end }}
