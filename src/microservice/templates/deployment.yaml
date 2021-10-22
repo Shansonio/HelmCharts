@@ -31,7 +31,13 @@ spec:
       {{ if $service.init  }}  
       initContainers: 
       - name: {{ $.Release.Name  }}-{{ $serviceName }}-init
+        {{ if $service.registry }}
+        image: {{ $service.registry }}/{{ $.Release.Name  }}/{{ $serviceName }}
+        {{ else if $.Values.global.registry }}
+        image: {{ $.Values.global.registry }}/{{ $.Release.Name  }}/{{ $serviceName }}
+        {{ else }}
         image: {{ $.Release.Name  }}/{{ $serviceName }}
+        {{ end }}        
         {{ if $service.init.args }}
         args: 
         {{ range $service.init.args }}
@@ -87,7 +93,13 @@ spec:
       {{ end }}
       containers: 
       - name: {{ $.Release.Name  }}-{{ $serviceName }}
+        {{ if $service.registry }}
+        image: {{ $service.registry }}/{{ $.Release.Name  }}/{{ $serviceName }}
+        {{ else if $.Values.global.registry }}
+        image: {{ $.Values.global.registry }}/{{ $.Release.Name  }}/{{ $serviceName }}
+        {{ else }}
         image: {{ $.Release.Name  }}/{{ $serviceName }}
+        {{ end }}
         ports: 
         - containerPort: 80
         volumeMounts: 
@@ -138,7 +150,13 @@ spec:
       - name: cacertificates
         secret: 
           secretName: ca-certificates  
-
+      {{ if $service.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{ $service.imagePullSecret }}
+      {{ else if $.Values.global.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{ $.Values.global.imagePullSecret }}
+      {{ end }}
 ---
 {{ end }}
 {{ end }}
