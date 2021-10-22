@@ -33,7 +33,7 @@ spec:
       - name: {{ $.Release.Name  }}-{{ $serviceName }}-init
         {{ if $service.registry }}
         image: {{ $service.registry }}/{{ $.Release.Name  }}/{{ $serviceName }}
-        {{ else if $.Values.global.registry }}
+        {{ else if ( $.Values.global | default dict ).registry }}
         image: {{ $.Values.global.registry }}/{{ $.Release.Name  }}/{{ $serviceName }}
         {{ else }}
         image: {{ $.Release.Name  }}/{{ $serviceName }}
@@ -95,7 +95,7 @@ spec:
       - name: {{ $.Release.Name  }}-{{ $serviceName }}
         {{ if $service.registry }}
         image: {{ $service.registry }}/{{ $.Release.Name  }}/{{ $serviceName }}
-        {{ else if $.Values.global.registry }}
+        {{ else if ( $.Values.global | default dict ).registry }}
         image: {{ $.Values.global.registry }}/{{ $.Release.Name  }}/{{ $serviceName }}
         {{ else }}
         image: {{ $.Release.Name  }}/{{ $serviceName }}
@@ -153,7 +153,7 @@ spec:
       {{ if $service.imagePullSecret }}
       imagePullSecrets:
       - name: {{ $service.imagePullSecret }}
-      {{ else if $.Values.global.imagePullSecret }}
+      {{ else if ( $.Values.global | default dict ).imagePullSecret }}
       imagePullSecrets:
       - name: {{ $.Values.global.imagePullSecret }}
       {{ end }}
