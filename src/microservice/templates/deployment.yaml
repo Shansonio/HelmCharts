@@ -24,6 +24,7 @@ spec:
         dapr.io/app-port: '80'
         dapr.io/http-max-request-size: '128'
         dapr.io/log-level: 'info'
+        dapr.io/log-as-json: "true"
         {{ if $service.dapr  }} 
         dapr.io/config: '{{ $.Release.Name  }}-{{ $serviceName }}-dapr-config-{{ template "rand" . }}'
         {{ end }}
