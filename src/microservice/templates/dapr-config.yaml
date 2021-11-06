@@ -2,14 +2,13 @@
 
 {{ if ne $serviceName "global" }}
 {{ if $service.dapr }}
+{{ if or $service.dapr.auth $service.dapr.tracing }}
 
 apiVersion: dapr.io/v1alpha1
 kind: Configuration
 metadata:
   name: {{ $.Release.Name  }}-{{ $serviceName }}-dapr-config-{{ template "rand" . }}
 spec:
-  metric:
-    enabled: true
 {{ if $service.dapr.auth }}
   httpPipeline:
     handlers:
@@ -24,6 +23,7 @@ spec:
 {{ end }}
 
 ---
+{{ end }}
 {{ end }}
 {{ end }}
 {{ end }}

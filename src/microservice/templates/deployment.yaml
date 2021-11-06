@@ -18,15 +18,28 @@ spec:
     metadata: 
       labels: 
         app: {{ $.Release.Name  }}-{{ $serviceName }}
-      annotations: 
+      annotations:         
+        {{ if $service.dapr  }}
+        dapr.io/enabled: {{ quote $service.dapr.enabled | default "true" }}
+        dapr.io/app-id: '{{ $.Release.Name  }}-{{ $serviceName }}'
+        dapr.io/app-port: {{ quote $service.dapr.app-port | default "80" }}
+        dapr.io/http-max-request-size: {{ quote $service.dapr.http-max-request-size | default "128" }}
+        dapr.io/log-level: {{ quote $service.dapr.log-level | default "warn" }}
+        dapr.io/log-as-json: {{ quote $service.dapr.log-as-json | default "true" }} 
+        dapr.io/sidecar-listen-addresses: {{ quote $service.dapr.sidecar-listen-addresses | default "0.0.0.0" }} 
+
+        {{ if or $service.dapr.auth $service.dapr.tracing }} 
+        dapr.io/config: '{{ $.Release.Name  }}-{{ $serviceName }}-dapr-config-{{ template "rand" . }}'
+        {{ end }}
+
+        {{ else }}
         dapr.io/enabled: 'true'
         dapr.io/app-id: '{{ $.Release.Name  }}-{{ $serviceName }}'
         dapr.io/app-port: '80'
         dapr.io/http-max-request-size: '128'
-        dapr.io/log-level: 'info'
-        dapr.io/log-as-json: "true"
-        {{ if $service.dapr  }} 
-        dapr.io/config: '{{ $.Release.Name  }}-{{ $serviceName }}-dapr-config-{{ template "rand" . }}'
+        dapr.io/log-level: 'warn'
+        dapr.io/log-as-json: 'true'
+        dapr.io/sidecar-listen-addresses: '0.0.0.0'
         {{ end }}
     spec:   
       {{ if $service.init  }}  

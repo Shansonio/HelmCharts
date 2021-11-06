@@ -42,6 +42,12 @@ api
     args: 
     - "-migration" # argument to launch database migration
   dapr: # dapr additional config
+    enabled: true
+    app-port: '80'
+    http-max-request-size: '128'
+    log-level: 'warn'
+    log-as-json: 'true'
+    sidecar-listen-addresses: '0.0.0.0'
     auth: # authentication for service invocation
       clientId: id
       clientSecretKey: secret
