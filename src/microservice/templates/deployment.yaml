@@ -20,9 +20,9 @@ spec:
         app: {{ $.Release.Name  }}-{{ $serviceName }}
       annotations:         
         {{ if $service.dapr  }}
-        dapr.io/enabled: '{{ $service.dapr.enabled | default "true") }}'
+        dapr.io/enabled: '{{ $service.dapr.enabled | default "true" }}'
         dapr.io/app-id: '{{ $.Release.Name  }}-{{ $serviceName }}'
-        dapr.io/app-port: '{{ $service.dapr.app_port | default "80") }}'
+        dapr.io/app-port: '{{ $service.dapr.app_port | default "80" }}'
         dapr.io/http-max-request-size: '{{ $service.dapr.http_max_request_size | default "128" }}'
         dapr.io/log-level: '{{ $service.dapr.log_level | default "warn" }}'
         dapr.io/log-as-json: '{{ $service.dapr.log_as_json | default "true" }}'
