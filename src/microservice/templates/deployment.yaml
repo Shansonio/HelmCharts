@@ -28,7 +28,6 @@ spec:
         dapr.io/log-as-json: '{{ $service.dapr.log_as_json | default "true" }}'
         dapr.io/sidecar-listen-addresses: '{{ $service.dapr.sidecar_listen_addresses | default "0.0.0.0" }}'
         apr.io/sidecar-memory-limit: '{{ $service.dapr.sidecar_memory_limit | default "256Mi" }}'
-        dapr.io/sidecar-memory-request: '{{ $service.dapr.sidecar_memory_request | default "128Mi" }}'
 
         {{ if or $service.dapr.auth $service.dapr.tracing }} 
         dapr.io/config: '{{ $.Release.Name  }}-{{ $serviceName }}-dapr-config-{{ template "rand" . }}'
@@ -43,7 +42,6 @@ spec:
         dapr.io/log-as-json: 'true'
         dapr.io/sidecar-listen-addresses: '0.0.0.0'
         dapr.io/sidecar-memory-limit: '256Mi'
-        dapr.io/sidecar-memory-request: '128Mi'
         {{ end }}
     spec:   
       {{ if $service.init  }}  
