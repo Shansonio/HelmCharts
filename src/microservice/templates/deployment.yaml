@@ -118,8 +118,8 @@ spec:
         {{ else }}
         image: {{ $.Release.Name  }}/{{ $serviceName }}
         {{ end }}
-        {{- if .service.resources }}
-        resources: {{ toYaml .service.resources | nindent 10 }}
+        {{- if $service.resources }}
+        resources: {{ toYaml $service.resources | nindent 10 }}
         {{- end }}
         ports: 
         - containerPort: 80
